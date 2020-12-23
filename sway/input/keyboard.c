@@ -428,6 +428,17 @@ static void handle_key_event(struct sway_keyboard *keyboard,
 		keyboard->held_binding = binding_released;
 	}
 
+	// HACK: always execute release all bindings on Alt release
+	// (It is the only onw I have configured)
+	if (event->state == WLR_KEY_RELEASED && event->keycode == 56) {
+		for (int i = 0; i < config->current_mode->keysym_bindings->length; ++i) {
+			struct sway_binding *alt_binding = config->current_mode->keysym_bindings->items[i];
+			if (alt_binding->flags & BINDING_RELEASE) {
+				seat_execute_command(seat, alt_binding);
+			}
+		}
+	}
+
 	// Identify and execute active pressed binding
 	struct sway_binding *binding = NULL;
 	if (event->state == WLR_KEY_PRESSED) {
