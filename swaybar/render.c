@@ -643,16 +643,16 @@ static uint32_t render_to_cairo(cairo_t *cairo, struct swaybar_output *output) {
 	 * utilize the available space.
 	 */
 	double x = output->width * output->scale;
+	if (bar->status) {
+		uint32_t h = render_status_line(cairo, output, &x);
+		max_height = h > max_height ? h : max_height;
+	}
 #if HAVE_TRAY
 	if (bar->tray) {
 		uint32_t h = render_tray(cairo, output, &x);
 		max_height = h > max_height ? h : max_height;
 	}
 #endif
-	if (bar->status) {
-		uint32_t h = render_status_line(cairo, output, &x);
-		max_height = h > max_height ? h : max_height;
-	}
 	x = 0;
 	if (config->workspace_buttons) {
 		struct swaybar_workspace *ws;
